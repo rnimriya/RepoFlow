@@ -24,9 +24,18 @@ from app.rag.vectorstore import search_frontend, search_backend
 
 settings = get_settings()
 
-# Load system prompt once at module import
+# Load system prompt safely
 _SYSTEM_PROMPT_PATH = Path(__file__).parent.parent.parent / "prompts" / "blueprint_system.md"
-SYSTEM_PROMPT = _SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+try:
+    SYSTEM_PROMPT = _SYSTEM_PROMPT_PATH.read_text(encoding="utf-8")
+except Exception as e:
+    import logging
+    logging.warning(f"Could not load blueprint_system.md prompt file: {e}")
+    SYSTEM_PROMPT = (
+        "You are RepoFlow AI, an expert software integration engineer. "
+        "Your purpose is to generate Integration Blueprints connecting a frontend UI component "
+        "to a backend API endpoint. Always return a valid JSON object matching the requested schema."
+    )
 
 
 def _pick_model(tier: str) -> str:
