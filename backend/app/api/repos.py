@@ -102,7 +102,7 @@ async def run_real_indexing(repo_id: str, repo_full_name: str, category: str):
     except Exception as e:
         logger.error(f"Error during real indexing of {repo_full_name}: {e}")
 
-@router.get("/", response_model=list[dict])
+@router.get("", response_model=list[dict])
 async def list_repos(profile: dict = Depends(get_user_profile)):
     """List all registered repositories in the workspace."""
     if profile["id"] == "demo-user-001" or not is_real_mode():
@@ -112,7 +112,7 @@ async def list_repos(profile: dict = Depends(get_user_profile)):
     result = supabase.table("repos").select("*").order("created_at", desc=True).execute()
     return result.data or []
 
-@router.post("/", response_model=dict, status_code=201)
+@router.post("", response_model=dict, status_code=201)
 async def connect_repo(
     request: RepoCreate,
     background_tasks: BackgroundTasks,

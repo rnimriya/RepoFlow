@@ -7,6 +7,7 @@ const supabase = createClient(
 );
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+console.log("[RepoFlow API] NEXT_PUBLIC_API_URL is configured as:", API_URL);
 
 async function getAuthToken(): Promise<string> {
   if (typeof window !== "undefined" && localStorage.getItem("repoflow_demo_mode") === "true") {
@@ -59,7 +60,7 @@ export async function listBlueprints(): Promise<
 > {
   const token = await getAuthToken();
 
-  const res = await fetch(`${API_URL}/blueprints/`, {
+  const res = await fetch(`${API_URL}/blueprints`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -71,7 +72,7 @@ export async function listBlueprints(): Promise<
 export async function listRepos(): Promise<Repo[]> {
   const token = await getAuthToken();
 
-  const res = await fetch(`${API_URL}/repos/`, {
+  const res = await fetch(`${API_URL}/repos`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -83,7 +84,7 @@ export async function listRepos(): Promise<Repo[]> {
 export async function connectRepo(githubUrl: string, category: string): Promise<Repo> {
   const token = await getAuthToken();
 
-  const res = await fetch(`${API_URL}/repos/`, {
+  const res = await fetch(`${API_URL}/repos`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

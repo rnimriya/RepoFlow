@@ -420,7 +420,7 @@ async def get_blueprint(
     )
 
 
-@router.get("/", response_model=list[dict])
+@router.get("", response_model=list[dict])
 async def list_blueprints(profile: dict = Depends(get_user_profile)):
     """List the current user's blueprint history (most recent first)."""
     if profile["id"] == "demo-user-001":
