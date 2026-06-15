@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import type { SearchResponse } from "./types";
+import type { SearchResponse, Repo } from "./types";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -66,3 +66,63 @@ export async function listBlueprints(): Promise<
   if (!res.ok) throw new Error("Failed to fetch blueprint history");
   return res.json();
 }
+
+/** List all connected repositories. */
+export async function listRepos(): Promise<Repo[]> {
+  const token = await getAuthToken();
+
+  const res = await fetch(`${API_URL}/repos/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch repositories");
+  return res.json();
+}
+
+/** Connect a new repository and start indexing. */
+export async function connectRepo(githubUrl: string, category: string): Promise<Repo> {
+  const token = await getAuthToken();
+
+  const res = await fetch(`${API_URL}/repos/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ github_url: githubUrl, category }),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ detail: "Failed to connect repository" }));
+    throw new Error(error.detail || `API error ${res.status}`);
+  }
+
+  return res.json();
+}
+
+/** Re-trigger indexing for a repository. */
+export async function reindexRepo(repoId: string): Promise<{ status: string }> {
+  const token = await getAuthToken();
+
+  const res = await fetch(`${API_URL}/repos/${repoId}/index`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) throw new Error("Failed to trigger re-indexing");
+  return res.json();
+}
+
+/** Delete a repository from the workspace. */
+export async function deleteRepo(repoId: string): Promise<{ status: string }> {
+  const token = await getAuthToken();
+
+  const res = await fetch(`${API_URL}/repos/${repoId}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) throw new Error("Failed to delete repository");
+  return res.json();
+}
+

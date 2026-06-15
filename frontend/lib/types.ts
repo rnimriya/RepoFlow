@@ -33,3 +33,17 @@ export interface SearchResponse {
   latency_ms: number;
   tokens_used?: number;
 }
+
+export interface Repo {
+  id: string;
+  github_url: string;
+  owner: string;
+  name: string;
+  description: string | null;
+  category: string;
+  tags: string[];
+  stars: number;
+  last_indexed_at: string | null;
+  is_active: boolean;
+}
+

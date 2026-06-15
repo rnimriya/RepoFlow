@@ -35,6 +35,12 @@ class Repo(BaseModel):
     is_active: bool = True
 
 
+class RepoCreate(BaseModel):
+    github_url: str
+    category: str
+
+
+
 class IndexedFile(BaseModel):
     id: str
     repo_id: str

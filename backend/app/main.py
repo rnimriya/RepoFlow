@@ -43,6 +43,14 @@ except ImportError as e:
     import logging
     logging.warning(f"stripe_webhooks router not loaded (missing deps): {e}")
 
+try:
+    from app.api import repos
+    app.include_router(repos.router, prefix="/api/v1")
+except ImportError as e:
+    import logging
+    logging.warning(f"repos router not loaded (missing deps): {e}")
+
+
 
 @app.get("/health")
 async def health_check():
